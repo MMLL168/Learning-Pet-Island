@@ -142,20 +142,20 @@ function App() {
 
   const renderHome = () => (
     <div className="flex flex-col items-center gap-8 animate-fade-in">
-      <div className="w-full flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm">
+      <div className="w-full flex justify-between items-center bg-slate-800 p-4 rounded-2xl shadow-lg border border-slate-700">
         <div className="flex items-center gap-4">
-          <div className="bg-orange-100 p-2 rounded-lg">
+          <div className="bg-slate-700 p-2 rounded-lg border border-slate-600">
             <span className="text-2xl">🍖</span>
-            <span className="font-bold text-orange-800 ml-2">{user.food}</span>
+            <span className="font-bold text-orange-300 ml-2">{user.food}</span>
           </div>
-          <div className="bg-indigo-100 p-2 rounded-lg">
+          <div className="bg-slate-700 p-2 rounded-lg border border-slate-600">
             <span className="text-2xl">⭐</span>
-            <span className="font-bold text-indigo-800 ml-2">{user.points}</span>
+            <span className="font-bold text-yellow-300 ml-2">{user.points}</span>
           </div>
         </div>
         <button 
           onClick={() => setView('SHOP')}
-          className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition shadow-purple-200 shadow-md font-bold"
+          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition shadow-lg shadow-purple-900/50 font-bold border border-purple-400"
         >
           🎁 兌換獎品
         </button>
@@ -169,20 +169,20 @@ function App() {
 
       <button
         onClick={() => setView('QUIZ_SELECT')}
-        className="w-full max-w-sm py-4 bg-blue-500 hover:bg-blue-600 text-white text-xl font-bold rounded-2xl shadow-lg shadow-blue-200 transform transition hover:-translate-y-1 active:translate-y-0"
+        className="w-full max-w-sm py-4 bg-blue-600 hover:bg-blue-500 text-white text-xl font-bold rounded-2xl shadow-xl shadow-blue-900/20 transform transition hover:-translate-y-1 active:translate-y-0 border border-blue-400"
       >
         📝 開始練習賺飼料
       </button>
 
       {/* Inventory Preview */}
       <div className="w-full max-w-md">
-        <h3 className="text-gray-500 text-sm font-bold mb-2 ml-1">我的獎勵券</h3>
+        <h3 className="text-slate-400 text-sm font-bold mb-2 ml-1">我的獎勵券</h3>
         <div className="flex gap-2 flex-wrap">
-          {user.inventory.length === 0 && <span className="text-gray-400 text-xs">暫無獎勵，快去商店看看！</span>}
+          {user.inventory.length === 0 && <span className="text-slate-600 text-xs">暫無獎勵，快去商店看看！</span>}
           {user.inventory.map((id, index) => {
              const item = REWARDS.find(r => r.id === id);
              return item ? (
-               <span key={`${id}-${index}`} className="text-2xl" title={item.name}>{item.icon}</span>
+               <span key={`${id}-${index}`} className="text-2xl hover:scale-110 transition cursor-help" title={item.name}>{item.icon}</span>
              ) : null;
           })}
         </div>
@@ -193,23 +193,23 @@ function App() {
   const renderQuizSelect = () => (
     <div className="w-full max-w-2xl mx-auto">
       <div className="flex items-center mb-6">
-        <button onClick={() => setView('HOME')} className="p-2 hover:bg-gray-200 rounded-full mr-4">
+        <button onClick={() => setView('HOME')} className="p-2 text-slate-400 hover:bg-slate-800 rounded-full mr-4 transition">
           ⬅️
         </button>
-        <h2 className="text-2xl font-bold text-gray-800">選擇練習項目</h2>
+        <h2 className="text-2xl font-bold text-slate-100">選擇練習項目</h2>
       </div>
       
       {isLoading && (
-        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl flex flex-col items-center">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className="bg-slate-800 p-6 rounded-xl flex flex-col items-center border border-slate-600">
             <div className="animate-spin text-4xl mb-2">🔄</div>
-            <p className="font-bold text-gray-600">AI 老師正在出題中...</p>
+            <p className="font-bold text-slate-300">AI 老師正在出題中...</p>
           </div>
         </div>
       )}
 
       {errorMsg && (
-        <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-xl">
+        <div className="mb-4 p-4 bg-red-900/50 text-red-200 border border-red-800 rounded-xl">
           {errorMsg}
         </div>
       )}
@@ -219,12 +219,12 @@ function App() {
           <button
             key={type}
             onClick={() => handleStartQuiz(type)}
-            className="p-6 bg-white rounded-xl shadow-md border-2 border-transparent hover:border-blue-400 hover:shadow-lg transition text-left group"
+            className="p-6 bg-slate-800 rounded-xl shadow-lg border-2 border-slate-700 hover:border-blue-500 hover:bg-slate-750 transition text-left group"
           >
-            <div className="text-xl font-bold text-gray-800 group-hover:text-blue-600 mb-2">
+            <div className="text-xl font-bold text-slate-200 group-hover:text-blue-400 mb-2">
               {type}
             </div>
-            <p className="text-gray-500 text-sm">
+            <p className="text-slate-400 text-sm group-hover:text-slate-300">
               針對 {type} 進行強化練習，答對可獲得獎勵。
             </p>
           </button>
@@ -234,18 +234,18 @@ function App() {
   );
 
   return (
-    <div className="min-h-screen bg-sky-50 p-4 md:p-8 font-sans relative">
+    <div className="min-h-screen bg-slate-950 p-4 md:p-8 font-sans relative text-slate-100 selection:bg-blue-500 selection:text-white">
       <div className="max-w-4xl mx-auto">
         <header className="mb-8 flex justify-between items-center relative">
           <div className="text-center w-full">
-            <h1 className="text-3xl md:text-4xl font-black text-blue-600 tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-black text-blue-400 tracking-tight drop-shadow-lg">
               樂學寵物島 🏝️
             </h1>
-            <p className="text-blue-400 font-medium">每天練習一點點，寵物長大變神獸</p>
+            <p className="text-slate-400 font-medium">每天練習一點點，寵物長大變神獸</p>
           </div>
           <button 
             onClick={() => setShowKeyInput(true)} 
-            className="absolute right-0 top-0 p-2 text-gray-400 hover:text-blue-500 transition"
+            className="absolute right-0 top-0 p-2 text-slate-600 hover:text-blue-400 transition"
             title="設定 API Key"
           >
             ⚙️ 設定
@@ -273,14 +273,14 @@ function App() {
           )}
         </main>
 
-        <footer className="mt-12 py-6 border-t border-sky-100 flex flex-col items-center justify-center gap-3">
+        <footer className="mt-12 py-6 border-t border-slate-800 flex flex-col items-center justify-center gap-3">
             <button 
               onClick={handleCheckApi}
               disabled={apiCheckStatus === 'checking'}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                apiCheckStatus === 'ok' ? 'bg-green-100 text-green-700' :
-                apiCheckStatus === 'fail' ? 'bg-red-100 text-red-700' :
-                'bg-white text-gray-500 hover:bg-gray-100 shadow-sm'
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all border ${
+                apiCheckStatus === 'ok' ? 'bg-green-900/30 text-green-400 border-green-800' :
+                apiCheckStatus === 'fail' ? 'bg-red-900/30 text-red-400 border-red-800' :
+                'bg-slate-800 text-slate-400 hover:bg-slate-700 border-slate-700'
               }`}
             >
               {apiCheckStatus === 'checking' ? (
@@ -301,32 +301,32 @@ function App() {
                 </>
               )}
             </button>
-            <div className="text-sky-300 text-xs">
+            <div className="text-slate-600 text-xs">
               Powered by Google Gemini
             </div>
         </footer>
 
         {/* API Key Modal */}
         {(showKeyInput || !apiKey) && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-             <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md">
-                <h3 className="text-xl font-bold mb-4 text-gray-800">設定 API Key</h3>
-                <p className="text-gray-500 text-sm mb-4">
+          <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+             <div className="bg-slate-800 rounded-2xl shadow-2xl p-6 w-full max-w-md border border-slate-700">
+                <h3 className="text-xl font-bold mb-4 text-slate-100">設定 API Key</h3>
+                <p className="text-slate-400 text-sm mb-4">
                   為了讓 AI 老師出題，請輸入您的 Google Gemini API Key。<br/>
-                  <span className="text-xs text-gray-400">您的 Key 只會儲存在您的瀏覽器中。</span>
+                  <span className="text-xs text-slate-500">您的 Key 只會儲存在您的瀏覽器中。</span>
                 </p>
                 <input 
                   type="password"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                   placeholder="請貼上 API Key (例: AIza...)"
-                  className="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500 outline-none text-gray-800"
+                  className="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500 outline-none text-slate-100 placeholder-slate-600"
                 />
                 <div className="flex justify-end gap-2">
                   {apiKey && (
                     <button 
                       onClick={() => setShowKeyInput(false)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700"
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 border border-blue-500"
                     >
                       儲存並關閉
                     </button>
@@ -335,7 +335,7 @@ function App() {
                     href="https://aistudio.google.com/app/apikey" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="px-4 py-2 text-blue-500 hover:bg-blue-50 rounded-lg text-sm flex items-center"
+                    className="px-4 py-2 text-blue-400 hover:bg-slate-700 rounded-lg text-sm flex items-center transition"
                   >
                     取得 Key ↗
                   </a>
