@@ -28,9 +28,9 @@ export const QuizArea: React.FC<QuizAreaProps> = ({ apiKey, questions, onComplet
     
     if (isCorrect) {
       setScore(s => s + 1);
-      setFeedback("答對了！太棒了！ 🎉");
+      setFeedback("🎉 太棒了！答對了！");
     } else {
-      setFeedback(`答錯了。正確答案是：${currentQ.correctAnswer}。 ${currentQ.explanation || ''}`);
+      setFeedback(`😅 哎呀！正確答案是：${currentQ.correctAnswer}。\n${currentQ.explanation || ''}`);
     }
     setShowResult(true);
   };
@@ -41,12 +41,11 @@ export const QuizArea: React.FC<QuizAreaProps> = ({ apiKey, questions, onComplet
     const result = await evaluateSentence(apiKey, currentQ.keyword || currentQ.prompt, sentenceInput);
     setIsEvaluating(false);
     
-    // Simple logic: score > 60 counts as "Pass"
     if (result.score >= 60) {
       setScore(s => s + 1);
-      setFeedback(`評分：${result.score}分。 ${result.feedback}`);
+      setFeedback(`👍 評分：${result.score}分。\n${result.feedback}`);
     } else {
-      setFeedback(`評分：${result.score}分。 ${result.feedback} 加油，再試一次！`);
+      setFeedback(`💪 評分：${result.score}分。\n${result.feedback} 加油！`);
     }
     setShowResult(true);
   };
@@ -63,86 +62,102 @@ export const QuizArea: React.FC<QuizAreaProps> = ({ apiKey, questions, onComplet
     }
   };
 
-  if (!currentQ) return <div className="p-8 text-center text-slate-300">載入錯誤...</div>;
+  if (!currentQ) return <div className="p-8 text-center text-slate-300 animate-pulse">題目載入中...</div>;
 
   return (
-    <div className="bg-slate-800 rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-2xl mx-auto border-t-8 border-blue-500 ring-1 ring-slate-700">
+    <div className="bg-slate-800/90 backdrop-blur rounded-3xl shadow-2xl p-6 md:p-10 w-full max-w-3xl mx-auto border border-slate-600 relative overflow-hidden">
+      {/* Top Decoration */}
+      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <span className="text-sm font-bold text-slate-500">
-          題目 {currentIndex + 1} / {questions.length}
-        </span>
-        <button onClick={onCancel} className="text-slate-500 hover:text-red-400 transition">
-          退出
+      <div className="flex justify-between items-center mb-8">
+        <div className="flex items-center gap-2">
+            <span className="bg-slate-700 text-slate-300 px-3 py-1 rounded-lg text-sm font-bold border border-slate-600">
+                Q.{currentIndex + 1}
+            </span>
+            <span className="text-slate-400 text-sm">/ {questions.length}</span>
+        </div>
+        <button onClick={onCancel} className="text-slate-400 hover:text-white transition font-medium px-3 py-1 hover:bg-red-500/20 rounded-lg">
+          ❌ 放棄
         </button>
       </div>
 
-      {/* Question */}
-      <div className="mb-8">
-        <span className="inline-block px-3 py-1 bg-blue-900/40 text-blue-300 rounded-full text-xs font-bold mb-2 border border-blue-800">
+      {/* Question Card */}
+      <div className="mb-10 text-center">
+        <span className="inline-block px-4 py-1 bg-blue-600 text-white rounded-full text-sm font-bold mb-4 shadow-lg shadow-blue-900/50">
           {currentQ.type}
         </span>
-        <h3 className="text-xl md:text-2xl font-bold text-slate-100 leading-relaxed tracking-wide">
+        <h3 className="text-2xl md:text-3xl font-black text-white leading-relaxed tracking-wide drop-shadow-md">
           {currentQ.prompt}
         </h3>
       </div>
 
       {/* Interaction Area */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         {currentQ.type === QuestionType.SENTENCE ? (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <textarea
               value={sentenceInput}
               onChange={(e) => setSentenceInput(e.target.value)}
               placeholder="請在這裡輸入你的造句..."
-              className="w-full p-4 bg-slate-900 border-2 border-slate-700 rounded-xl focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none min-h-[120px] text-slate-100 placeholder-slate-600"
+              className="w-full p-6 bg-slate-900/80 border-2 border-slate-600 rounded-3xl focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 focus:outline-none min-h-[150px] text-xl text-white placeholder-slate-500 shadow-inner"
               disabled={showResult}
             />
             {!showResult && (
               <button
                 onClick={handleSentenceSubmit}
                 disabled={isEvaluating || !sentenceInput.trim()}
-                className="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 transition shadow-lg"
+                className="btn-game w-full py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-2xl font-black text-xl hover:from-blue-500 hover:to-blue-400 border-blue-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-xl"
               >
-                {isEvaluating ? "AI 老師批改中..." : "送出答案"}
+                {isEvaluating ? "🤖 AI 老師批改中..." : "🚀 送出答案"}
               </button>
             )}
           </div>
         ) : (
-          <div className="grid gap-3">
-            {currentQ.options?.map((opt, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleChoiceSubmit(opt)}
-                disabled={showResult}
-                className={`p-4 rounded-xl border-2 text-left font-medium transition-all
-                  ${showResult 
-                    ? opt === currentQ.correctAnswer 
-                      ? 'bg-green-900/40 border-green-500 text-green-300' 
-                      : opt === selectedOption 
-                        ? 'bg-red-900/40 border-red-500 text-red-300'
-                        : 'bg-slate-800 border-slate-700 text-slate-600'
-                    : 'bg-slate-700 border-slate-600 hover:border-blue-400 hover:bg-slate-600 text-slate-200'
-                  }
-                `}
-              >
-                <span className="mr-2 opacity-50 font-bold">{String.fromCharCode(65 + idx)}.</span>
-                {opt}
-              </button>
-            ))}
+          <div className="grid gap-4">
+            {currentQ.options?.map((opt, idx) => {
+              // Determine style based on state
+              let btnClass = "bg-slate-700 border-slate-900 text-slate-200 hover:bg-slate-600 hover:border-blue-500"; // default
+              
+              if (showResult) {
+                if (opt === currentQ.correctAnswer) {
+                  btnClass = "bg-green-600 border-green-800 text-white ring-4 ring-green-500/30"; // Correct
+                } else if (opt === selectedOption) {
+                  btnClass = "bg-red-500 border-red-800 text-white opacity-60"; // Wrong selected
+                } else {
+                  btnClass = "bg-slate-800 border-slate-900 text-slate-500 opacity-50"; // Others
+                }
+              }
+
+              return (
+                <button
+                  key={idx}
+                  onClick={() => handleChoiceSubmit(opt)}
+                  disabled={showResult}
+                  className={`btn-game w-full p-5 rounded-2xl border-b-4 text-left font-bold text-lg transition-all flex items-center group ${btnClass}`}
+                >
+                  <span className={`w-10 h-10 flex items-center justify-center rounded-full mr-4 text-lg font-black shrink-0 ${showResult && opt === currentQ.correctAnswer ? 'bg-white text-green-600' : 'bg-black/20 text-white/70'}`}>
+                    {String.fromCharCode(65 + idx)}
+                  </span>
+                  <span>{opt}</span>
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
 
-      {/* Feedback & Next */}
+      {/* Feedback Overlay */}
       {showResult && (
-        <div className="mt-6 p-4 bg-slate-900 rounded-xl border border-slate-700 animate-fade-in">
-          <p className="text-slate-200 font-medium mb-4">{feedback}</p>
+        <div className="mt-8 animate-fade-in bg-slate-900/50 p-6 rounded-3xl border border-slate-600/50">
+            <div className={`text-lg font-bold mb-6 whitespace-pre-wrap leading-relaxed ${feedback.includes('答對') || feedback.includes('👍') ? 'text-green-400' : 'text-orange-400'}`}>
+                {feedback}
+            </div>
           <button
             onClick={handleNext}
-            className="w-full py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-500 shadow-md transition border border-green-500"
+            className="btn-game w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-2xl font-black text-xl hover:brightness-110 shadow-lg border-green-700 flex items-center justify-center gap-2"
           >
-            {isLast ? "完成測驗，領取獎勵！" : "下一題"}
+            {isLast ? "🎉 領取獎勵" : "下一題 ➡️"}
           </button>
         </div>
       )}
