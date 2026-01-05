@@ -10,8 +10,8 @@ interface ShopProps {
 
 export const Shop: React.FC<ShopProps> = ({ userPoints, userInventory, onPurchase, onClose }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl mx-auto overflow-hidden flex flex-col h-[80vh]">
-      <div className="bg-slate-900 p-6 flex justify-between items-center text-white">
+    <div className="bg-slate-800 rounded-2xl shadow-xl w-full max-w-4xl mx-auto overflow-hidden flex flex-col h-[80vh] border border-slate-700">
+      <div className="bg-slate-950 p-6 flex justify-between items-center text-white border-b border-slate-800">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
             🎁 獎勵兌換中心
@@ -19,12 +19,12 @@ export const Shop: React.FC<ShopProps> = ({ userPoints, userInventory, onPurchas
           <p className="text-slate-400 text-sm mt-1">累積星星，兌換超棒獎品！</p>
         </div>
         <div className="text-right">
-          <div className="text-sm opacity-80">你的星星</div>
+          <div className="text-sm opacity-80 text-slate-400">你的星星</div>
           <div className="text-3xl font-bold text-yellow-400">⭐ {userPoints}</div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 bg-gray-100">
+      <div className="flex-1 overflow-y-auto p-4 bg-slate-900">
         <div className="space-y-4 max-w-3xl mx-auto">
           {REWARDS.map((item) => {
             const ownedCount = userInventory.filter(id => id === item.id).length;
@@ -33,7 +33,7 @@ export const Shop: React.FC<ShopProps> = ({ userPoints, userInventory, onPurchas
             return (
               <div 
                 key={item.id} 
-                className="bg-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-4 shadow-lg border border-slate-700"
+                className="bg-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-4 shadow-lg border border-slate-700 transition hover:border-slate-600"
               >
                 {/* Icon Box */}
                 <div className={`w-16 h-16 sm:w-20 sm:h-20 ${item.color} rounded-2xl flex items-center justify-center text-3xl sm:text-4xl shadow-inner shrink-0`}>
@@ -42,10 +42,10 @@ export const Shop: React.FC<ShopProps> = ({ userPoints, userInventory, onPurchas
 
                 {/* Text Info */}
                 <div className="flex-1 text-center sm:text-left">
-                  <h3 className="text-white font-bold text-lg leading-tight">{item.name}</h3>
-                  <p className="text-slate-300 text-sm mt-1">{item.desc}</p>
+                  <h3 className="text-slate-100 font-bold text-lg leading-tight">{item.name}</h3>
+                  <p className="text-slate-400 text-sm mt-1">{item.desc}</p>
                   {ownedCount > 0 && (
-                    <span className="inline-block mt-2 bg-slate-700 text-slate-300 text-xs px-2 py-1 rounded-full">
+                    <span className="inline-block mt-2 bg-slate-950 text-slate-400 text-xs px-2 py-1 rounded-full border border-slate-700">
                       已持有: {ownedCount} 張
                     </span>
                   )}
@@ -59,10 +59,10 @@ export const Shop: React.FC<ShopProps> = ({ userPoints, userInventory, onPurchas
                   <button
                     onClick={() => onPurchase(item)}
                     disabled={!canAfford}
-                    className={`px-6 py-2 rounded-xl font-bold text-sm transition-transform active:scale-95 w-full
+                    className={`px-6 py-2 rounded-xl font-bold text-sm transition-transform active:scale-95 w-full border
                       ${canAfford
-                        ? 'bg-white text-slate-900 hover:bg-gray-100 shadow-md'
-                        : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+                        ? 'bg-slate-100 text-slate-900 hover:bg-white shadow-md border-transparent'
+                        : 'bg-slate-700 text-slate-500 cursor-not-allowed border-slate-600'
                       }
                     `}
                   >
@@ -75,10 +75,10 @@ export const Shop: React.FC<ShopProps> = ({ userPoints, userInventory, onPurchas
         </div>
       </div>
 
-      <div className="p-4 bg-white border-t text-center">
+      <div className="p-4 bg-slate-800 border-t border-slate-700 text-center">
         <button 
           onClick={onClose}
-          className="text-gray-500 hover:text-gray-800 font-medium"
+          className="text-slate-400 hover:text-slate-200 font-medium transition"
         >
           返回主畫面
         </button>
