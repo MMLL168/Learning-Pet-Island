@@ -11,43 +11,62 @@ interface ShopProps {
 export const Shop: React.FC<ShopProps> = ({ userPoints, userInventory, onPurchase, onClose }) => {
   return (
     <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl mx-auto overflow-hidden flex flex-col h-[80vh]">
-      <div className="bg-purple-600 p-6 flex justify-between items-center text-white">
+      <div className="bg-slate-900 p-6 flex justify-between items-center text-white">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
             🎁 獎勵兌換中心
           </h2>
-          <p className="text-purple-200 text-sm mt-1">累積點數，兌換酷炫獎品！</p>
+          <p className="text-slate-400 text-sm mt-1">累積星星，兌換超棒獎品！</p>
         </div>
         <div className="text-right">
-          <div className="text-sm opacity-80">你的點數</div>
-          <div className="text-3xl font-bold text-yellow-300">{userPoints} P</div>
+          <div className="text-sm opacity-80">你的星星</div>
+          <div className="text-3xl font-bold text-yellow-400">⭐ {userPoints}</div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="flex-1 overflow-y-auto p-4 bg-gray-100">
+        <div className="space-y-4 max-w-3xl mx-auto">
           {REWARDS.map((item) => {
-            const isOwned = userInventory.includes(item.id) && !item.effect; // Consumables are never "owned" permanently in this simplified logic
+            const ownedCount = userInventory.filter(id => id === item.id).length;
             const canAfford = userPoints >= item.cost;
 
             return (
-              <div key={item.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center text-center transition hover:shadow-md">
-                <div className="text-6xl mb-3">{item.icon}</div>
-                <h3 className="font-bold text-gray-800">{item.name}</h3>
-                <div className="mt-auto pt-4 w-full">
+              <div 
+                key={item.id} 
+                className="bg-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-4 shadow-lg border border-slate-700"
+              >
+                {/* Icon Box */}
+                <div className={`w-16 h-16 sm:w-20 sm:h-20 ${item.color} rounded-2xl flex items-center justify-center text-3xl sm:text-4xl shadow-inner shrink-0`}>
+                  {item.icon}
+                </div>
+
+                {/* Text Info */}
+                <div className="flex-1 text-center sm:text-left">
+                  <h3 className="text-white font-bold text-lg leading-tight">{item.name}</h3>
+                  <p className="text-slate-300 text-sm mt-1">{item.desc}</p>
+                  {ownedCount > 0 && (
+                    <span className="inline-block mt-2 bg-slate-700 text-slate-300 text-xs px-2 py-1 rounded-full">
+                      已持有: {ownedCount} 張
+                    </span>
+                  )}
+                </div>
+
+                {/* Cost & Button */}
+                <div className="flex flex-col items-center sm:items-end gap-2 min-w-[120px]">
+                  <div className="text-yellow-400 font-bold text-sm flex items-center gap-1">
+                    <span>⭐</span> Cost: {item.cost} Stars
+                  </div>
                   <button
                     onClick={() => onPurchase(item)}
-                    disabled={!canAfford || isOwned}
-                    className={`w-full py-2 rounded-lg font-bold text-sm transition-colors
-                      ${isOwned 
-                        ? 'bg-gray-100 text-gray-400 cursor-default'
-                        : canAfford
-                          ? 'bg-purple-600 text-white hover:bg-purple-700 shadow-purple-200 shadow-lg'
-                          : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    disabled={!canAfford}
+                    className={`px-6 py-2 rounded-xl font-bold text-sm transition-transform active:scale-95 w-full
+                      ${canAfford
+                        ? 'bg-white text-slate-900 hover:bg-gray-100 shadow-md'
+                        : 'bg-slate-700 text-slate-500 cursor-not-allowed'
                       }
                     `}
                   >
-                    {isOwned ? '已擁有' : `${item.cost} P 兌換`}
+                    兌換
                   </button>
                 </div>
               </div>
