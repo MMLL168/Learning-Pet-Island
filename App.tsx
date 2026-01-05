@@ -15,7 +15,7 @@ function App() {
   const [pet, setPet] = useState<Pet>(INITIAL_PET_STATE);
   const [user, setUser] = useState<UserState>(INITIAL_USER_STATE);
   
-  // Initialize API Key from localStorage only (safest for static deployment)
+  // Initialize API Key from localStorage only
   const [apiKey, setApiKey] = useState<string>(() => {
     return localStorage.getItem('gemini_api_key') || '';
   });
@@ -30,7 +30,6 @@ function App() {
 
   // --- Effects ---
   useEffect(() => {
-    // Save API key to local storage whenever it changes (if it's not empty)
     if (apiKey) {
       localStorage.setItem('gemini_api_key', apiKey);
     }
@@ -48,7 +47,7 @@ function App() {
     setIsLoading(true);
     setErrorMsg(null);
     try {
-      const questions = await generateQuizQuestions(apiKey, type, 3); // Generate 3 questions per session
+      const questions = await generateQuizQuestions(apiKey, type, 3);
       setActiveQuestions(questions);
       setView('QUIZ');
     } catch (e) {
@@ -61,9 +60,8 @@ function App() {
   };
 
   const handleQuizComplete = (score: number, total: number) => {
-    // Reward Logic
-    const foodEarned = score; // 1 correct = 1 food
-    const pointsEarned = score; // 1 correct = 1 Star
+    const foodEarned = score;
+    const pointsEarned = score;
 
     setUser(prev => ({
       ...prev,
@@ -71,8 +69,8 @@ function App() {
       points: prev.points + pointsEarned
     }));
 
-    // Show completion alert (can be a modal in future)
-    alert(`測驗完成！\n答對 ${score}/${total} 題\n獲得 🍖 ${foodEarned} 份飼料\n獲得 ⭐ ${pointsEarned} 顆星星`);
+    // Simple custom alert for now
+    alert(`🎉 測驗完成！\n\n獲得 🍖 ${foodEarned} 份飼料\n獲得 ⭐ ${pointsEarned} 顆星星`);
     setView('HOME');
   };
 
@@ -82,7 +80,6 @@ function App() {
 
     const expGain = 10;
     let newExp = pet.exp + expGain;
-    // Fix: Explicitly type newStage as PetStage so it can accept GRADUATE later
     let newStage: PetStage = pet.stage; 
     let newMaxExp = pet.maxExp;
 
@@ -92,9 +89,9 @@ function App() {
     if (newExp >= pet.maxExp) {
       if (currentConfig.nextStage !== pet.stage) {
         newStage = currentConfig.nextStage;
-        newExp = 0; // Reset exp for next stage
+        newExp = 0; 
         newMaxExp = PET_CONFIG[newStage].maxExp;
-        alert(`恭喜！${pet.name} 進化成 ${PET_CONFIG[newStage].label} 了！🎉`);
+        alert(`✨ 奇蹟發生了！\n\n${pet.name} 進化成 ${PET_CONFIG[newStage].label} 了！🎉`);
       }
     }
 
@@ -124,7 +121,7 @@ function App() {
         inventory: newInventory
       };
     });
-    alert(`成功兌換：${item.name}！`);
+    alert(`🎁 成功兌換：${item.name}！`);
   };
   
   const handleCheckApi = async () => {
@@ -141,23 +138,24 @@ function App() {
   // --- Views ---
 
   const renderHome = () => (
-    <div className="flex flex-col items-center gap-8 animate-fade-in">
-      <div className="w-full flex justify-between items-center bg-slate-800 p-4 rounded-2xl shadow-lg border border-slate-700">
-        <div className="flex items-center gap-4">
-          <div className="bg-slate-700 p-2 rounded-lg border border-slate-600">
-            <span className="text-2xl">🍖</span>
-            <span className="font-bold text-orange-300 ml-2">{user.food}</span>
+    <div className="flex flex-col items-center gap-8 animate-fade-in w-full max-w-md mx-auto">
+      {/* HUD - Heads Up Display */}
+      <div className="w-full flex justify-between items-center bg-slate-800/80 backdrop-blur-md p-3 rounded-3xl shadow-lg border-2 border-slate-600">
+        <div className="flex items-center gap-3">
+          <div className="bg-slate-900 px-3 py-1 rounded-full border border-orange-500/50 flex items-center shadow-inner">
+            <span className="text-xl mr-2">🍖</span>
+            <span className="font-black text-orange-400 text-lg">{user.food}</span>
           </div>
-          <div className="bg-slate-700 p-2 rounded-lg border border-slate-600">
-            <span className="text-2xl">⭐</span>
-            <span className="font-bold text-yellow-300 ml-2">{user.points}</span>
+          <div className="bg-slate-900 px-3 py-1 rounded-full border border-yellow-500/50 flex items-center shadow-inner">
+            <span className="text-xl mr-2">⭐</span>
+            <span className="font-black text-yellow-400 text-lg">{user.points}</span>
           </div>
         </div>
         <button 
           onClick={() => setView('SHOP')}
-          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition shadow-lg shadow-purple-900/50 font-bold border border-purple-400"
+          className="btn-game px-4 py-2 bg-purple-500 hover:bg-purple-400 text-white rounded-2xl border-purple-700 shadow-lg font-bold flex items-center gap-2 text-sm"
         >
-          🎁 兌換獎品
+          🎁 商店
         </button>
       </div>
 
@@ -169,20 +167,22 @@ function App() {
 
       <button
         onClick={() => setView('QUIZ_SELECT')}
-        className="w-full max-w-sm py-4 bg-blue-600 hover:bg-blue-500 text-white text-xl font-bold rounded-2xl shadow-xl shadow-blue-900/20 transform transition hover:-translate-y-1 active:translate-y-0 border border-blue-400"
+        className="btn-game w-full py-5 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-400 border-blue-700 text-white text-2xl font-black rounded-3xl shadow-xl transform transition flex items-center justify-center gap-3"
       >
-        📝 開始練習賺飼料
+        <span>🚀</span> 開始練習
       </button>
 
-      {/* Inventory Preview */}
-      <div className="w-full max-w-md">
-        <h3 className="text-slate-400 text-sm font-bold mb-2 ml-1">我的獎勵券</h3>
-        <div className="flex gap-2 flex-wrap">
-          {user.inventory.length === 0 && <span className="text-slate-600 text-xs">暫無獎勵，快去商店看看！</span>}
+      {/* Inventory Preview - simplified */}
+      <div className="w-full bg-slate-800/50 rounded-2xl p-4 border border-slate-700">
+        <h3 className="text-slate-400 text-xs font-bold mb-2 uppercase tracking-wider">Inventory</h3>
+        <div className="flex gap-3 flex-wrap min-h-[40px] items-center">
+          {user.inventory.length === 0 && <span className="text-slate-600 text-sm italic">背包空空的...</span>}
           {user.inventory.map((id, index) => {
              const item = REWARDS.find(r => r.id === id);
              return item ? (
-               <span key={`${id}-${index}`} className="text-2xl hover:scale-110 transition cursor-help" title={item.name}>{item.icon}</span>
+               <div key={`${id}-${index}`} className="bg-slate-700 p-2 rounded-xl border border-slate-600 shadow-sm" title={item.name}>
+                 <span className="text-2xl">{item.icon}</span>
+               </div>
              ) : null;
           })}
         </div>
@@ -192,67 +192,88 @@ function App() {
 
   const renderQuizSelect = () => (
     <div className="w-full max-w-2xl mx-auto">
-      <div className="flex items-center mb-6">
-        <button onClick={() => setView('HOME')} className="p-2 text-slate-400 hover:bg-slate-800 rounded-full mr-4 transition">
-          ⬅️
+      <div className="flex items-center mb-8">
+        <button onClick={() => setView('HOME')} className="p-3 bg-slate-800 hover:bg-slate-700 rounded-2xl mr-4 transition shadow-md border border-slate-600">
+          ⬅️ 返回
         </button>
-        <h2 className="text-2xl font-bold text-slate-100">選擇練習項目</h2>
+        <h2 className="text-3xl font-black text-white drop-shadow-md">選擇任務</h2>
       </div>
       
       {isLoading && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className="bg-slate-800 p-6 rounded-xl flex flex-col items-center border border-slate-600">
-            <div className="animate-spin text-4xl mb-2">🔄</div>
-            <p className="font-bold text-slate-300">AI 老師正在出題中...</p>
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className="bg-slate-800 p-8 rounded-3xl flex flex-col items-center border-4 border-blue-500/50 shadow-2xl">
+            <div className="animate-spin text-6xl mb-4">🔮</div>
+            <p className="font-bold text-xl text-blue-200">AI 老師正在準備題目...</p>
           </div>
         </div>
       )}
 
       {errorMsg && (
-        <div className="mb-4 p-4 bg-red-900/50 text-red-200 border border-red-800 rounded-xl">
+        <div className="mb-6 p-4 bg-red-900/80 text-red-100 border-2 border-red-500 rounded-2xl text-center font-bold">
           {errorMsg}
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {Object.values(QuestionType).map((type) => (
-          <button
-            key={type}
-            onClick={() => handleStartQuiz(type)}
-            className="p-6 bg-slate-800 rounded-xl shadow-lg border-2 border-slate-700 hover:border-blue-500 hover:bg-slate-750 transition text-left group"
-          >
-            <div className="text-xl font-bold text-slate-200 group-hover:text-blue-400 mb-2">
-              {type}
-            </div>
-            <p className="text-slate-400 text-sm group-hover:text-slate-300">
-              針對 {type} 進行強化練習，答對可獲得獎勵。
-            </p>
-          </button>
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {Object.values(QuestionType).map((type, idx) => {
+          // Assign random-ish colors based on index for variety
+          const colors = [
+            'from-pink-500 to-rose-500 border-rose-700',
+            'from-orange-500 to-amber-500 border-amber-700',
+            'from-green-500 to-emerald-500 border-emerald-700',
+            'from-cyan-500 to-blue-500 border-blue-700',
+            'from-purple-500 to-violet-500 border-violet-700'
+          ];
+          const colorClass = colors[idx % colors.length];
+
+          return (
+            <button
+              key={type}
+              onClick={() => handleStartQuiz(type)}
+              className={`btn-game p-6 bg-gradient-to-br ${colorClass} rounded-3xl shadow-lg hover:brightness-110 text-left group relative overflow-hidden`}
+            >
+              <div className="absolute right-0 bottom-0 opacity-20 transform translate-x-4 translate-y-4 text-8xl rotate-12">
+                📝
+              </div>
+              <div className="relative z-10">
+                <div className="text-2xl font-black text-white mb-2 shadow-sm">
+                  {type}
+                </div>
+                <p className="text-white/90 text-sm font-medium">
+                  挑戰 {type}，賺取飼料與星星！
+                </p>
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 p-4 md:p-8 font-sans relative text-slate-100 selection:bg-blue-500 selection:text-white">
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-8 flex justify-between items-center relative">
-          <div className="text-center w-full">
-            <h1 className="text-3xl md:text-4xl font-black text-blue-400 tracking-tight drop-shadow-lg">
-              樂學寵物島 🏝️
+    <div className="min-h-screen p-4 md:p-8 font-sans relative text-slate-100 overflow-x-hidden selection:bg-pink-500 selection:text-white">
+      <div className="max-w-5xl mx-auto">
+        {/* Header Logo */}
+        <header className="mb-10 flex justify-center items-center relative py-4">
+          <div className="text-center transform transition hover:scale-105 cursor-default">
+            <h1 className="text-4xl md:text-6xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-cyan-300 to-blue-600 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]" style={{ WebkitTextStroke: '1px #1e40af' }}>
+              樂學寵物島
             </h1>
-            <p className="text-slate-400 font-medium">每天練習一點點，寵物長大變神獸</p>
+            <div className="text-sm md:text-base font-bold text-blue-300 bg-blue-900/30 px-4 py-1 rounded-full inline-block mt-2 border border-blue-800/50">
+               快樂學習．培育神獸 🏝️
+            </div>
           </div>
+          
           <button 
             onClick={() => setShowKeyInput(true)} 
-            className="absolute right-0 top-0 p-2 text-slate-600 hover:text-blue-400 transition"
-            title="設定 API Key"
+            className="absolute right-0 top-0 p-3 text-slate-500 hover:text-white transition hover:rotate-90"
+            title="設定"
           >
-            ⚙️ 設定
+            ⚙️
           </button>
         </header>
 
-        <main>
+        <main className="mb-20">
           {view === 'HOME' && renderHome()}
           {view === 'QUIZ_SELECT' && renderQuizSelect()}
           {view === 'QUIZ' && (
@@ -273,72 +294,55 @@ function App() {
           )}
         </main>
 
-        <footer className="mt-12 py-6 border-t border-slate-800 flex flex-col items-center justify-center gap-3">
+        <footer className="fixed bottom-0 left-0 w-full bg-slate-900/80 backdrop-blur border-t border-slate-800 py-2 flex justify-center items-center gap-4 text-xs z-40">
             <button 
               onClick={handleCheckApi}
               disabled={apiCheckStatus === 'checking'}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all border ${
-                apiCheckStatus === 'ok' ? 'bg-green-900/30 text-green-400 border-green-800' :
-                apiCheckStatus === 'fail' ? 'bg-red-900/30 text-red-400 border-red-800' :
-                'bg-slate-800 text-slate-400 hover:bg-slate-700 border-slate-700'
-              }`}
+              className="flex items-center gap-1 opacity-60 hover:opacity-100 transition"
             >
-              {apiCheckStatus === 'checking' ? (
-                <>
-                  <span className="animate-spin">🔄</span> 連線測試中...
-                </>
-              ) : apiCheckStatus === 'ok' ? (
-                <>
-                  <span>✅</span> API 連線正常
-                </>
-              ) : apiCheckStatus === 'fail' ? (
-                <>
-                  <span>❌</span> API 連線失敗 (點擊重試)
-                </>
-              ) : (
-                <>
-                  <span>📡</span> 測試 API 連線
-                </>
-              )}
+              {apiCheckStatus === 'checking' ? '🔄 連線中...' : 
+               apiCheckStatus === 'ok' ? '✅ 連線正常' : 
+               apiCheckStatus === 'fail' ? '❌ 連線失敗' : '📡 API 狀態'}
             </button>
-            <div className="text-slate-600 text-xs">
+            <span className="text-slate-600">|</span>
+            <div className="text-slate-500">
               Powered by Google Gemini
             </div>
         </footer>
 
         {/* API Key Modal */}
         {(showKeyInput || !apiKey) && (
-          <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-             <div className="bg-slate-800 rounded-2xl shadow-2xl p-6 w-full max-w-md border border-slate-700">
-                <h3 className="text-xl font-bold mb-4 text-slate-100">設定 API Key</h3>
-                <p className="text-slate-400 text-sm mb-4">
-                  為了讓 AI 老師出題，請輸入您的 Google Gemini API Key。<br/>
-                  <span className="text-xs text-slate-500">您的 Key 只會儲存在您的瀏覽器中。</span>
+          <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+             <div className="bg-slate-800 rounded-3xl shadow-2xl p-8 w-full max-w-lg border-2 border-slate-700">
+                <h3 className="text-2xl font-black mb-4 text-white">🔑 啟動學習引擎</h3>
+                <p className="text-slate-300 text-base mb-6 leading-relaxed">
+                  請輸入 Google Gemini API Key 來喚醒 AI 老師。<br/>
+                  <span className="text-sm text-slate-500">金鑰僅會保存在您的電腦中，請安心使用。</span>
                 </p>
                 <input 
                   type="password"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
-                  placeholder="請貼上 API Key (例: AIza...)"
-                  className="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500 outline-none text-slate-100 placeholder-slate-600"
+                  placeholder="在此貼上 API Key..."
+                  className="w-full p-4 bg-slate-950 border-2 border-slate-700 rounded-2xl mb-6 focus:border-blue-500 focus:outline-none text-white text-lg placeholder-slate-600 transition"
                 />
-                <div className="flex justify-end gap-2">
-                  {apiKey && (
-                    <button 
-                      onClick={() => setShowKeyInput(false)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 border border-blue-500"
-                    >
-                      儲存並關閉
-                    </button>
-                  )}
+                <div className="flex justify-end gap-3">
                   <a 
                     href="https://aistudio.google.com/app/apikey" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="px-4 py-2 text-blue-400 hover:bg-slate-700 rounded-lg text-sm flex items-center transition"
+                    className="px-6 py-3 text-blue-400 hover:bg-slate-700 rounded-xl font-bold transition flex items-center"
                   >
                     取得 Key ↗
                   </a>
+                  {apiKey && (
+                    <button 
+                      onClick={() => setShowKeyInput(false)}
+                      className="btn-game px-8 py-3 bg-green-500 text-white rounded-xl border-green-700 font-bold hover:bg-green-400 shadow-lg"
+                    >
+                      確認啟動
+                    </button>
+                  )}
                 </div>
              </div>
           </div>
