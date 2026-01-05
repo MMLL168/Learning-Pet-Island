@@ -63,7 +63,7 @@ function App() {
   const handleQuizComplete = (score: number, total: number) => {
     // Reward Logic
     const foodEarned = score; // 1 correct = 1 food
-    const pointsEarned = score * 10; // 1 correct = 10 points
+    const pointsEarned = score; // 1 correct = 1 Star
 
     setUser(prev => ({
       ...prev,
@@ -72,7 +72,7 @@ function App() {
     }));
 
     // Show completion alert (can be a modal in future)
-    alert(`測驗完成！\n答對 ${score}/${total} 題\n獲得 🍖 ${foodEarned} 份飼料\n獲得 💰 ${pointsEarned} 點數`);
+    alert(`測驗完成！\n答對 ${score}/${total} 題\n獲得 🍖 ${foodEarned} 份飼料\n獲得 ⭐ ${pointsEarned} 顆星星`);
     setView('HOME');
   };
 
@@ -115,19 +115,12 @@ function App() {
     if (user.points < item.cost) return;
 
     setUser(prev => {
-      let newFood = prev.food;
       let newInventory = [...prev.inventory];
-      
-      if (item.effect === 'food') {
-        newFood += 5;
-      } else {
-        newInventory.push(item.id);
-      }
+      newInventory.push(item.id);
 
       return {
         ...prev,
         points: prev.points - item.cost,
-        food: newFood,
         inventory: newInventory
       };
     });
@@ -155,9 +148,9 @@ function App() {
             <span className="text-2xl">🍖</span>
             <span className="font-bold text-orange-800 ml-2">{user.food}</span>
           </div>
-          <div className="bg-yellow-100 p-2 rounded-lg">
-            <span className="text-2xl">💰</span>
-            <span className="font-bold text-yellow-800 ml-2">{user.points}</span>
+          <div className="bg-indigo-100 p-2 rounded-lg">
+            <span className="text-2xl">⭐</span>
+            <span className="font-bold text-indigo-800 ml-2">{user.points}</span>
           </div>
         </div>
         <button 
@@ -183,14 +176,14 @@ function App() {
 
       {/* Inventory Preview */}
       <div className="w-full max-w-md">
-        <h3 className="text-gray-500 text-sm font-bold mb-2 ml-1">我的收藏</h3>
+        <h3 className="text-gray-500 text-sm font-bold mb-2 ml-1">我的獎勵券</h3>
         <div className="flex gap-2 flex-wrap">
-          {user.inventory.length === 0 && <span className="text-gray-400 text-xs">暫無收藏，快去商店看看！</span>}
-          {user.inventory.map(id => {
-            // Find icon from constants is a bit hacky here but works for simple app
-            const item = REWARDS.find(r => r.id === id); // Need to export REWARDS or pass down
-            // For now just showing a placeholder if found
-            return <span key={id} className="text-2xl" title={id}>⭐</span>
+          {user.inventory.length === 0 && <span className="text-gray-400 text-xs">暫無獎勵，快去商店看看！</span>}
+          {user.inventory.map((id, index) => {
+             const item = REWARDS.find(r => r.id === id);
+             return item ? (
+               <span key={`${id}-${index}`} className="text-2xl" title={item.name}>{item.icon}</span>
+             ) : null;
           })}
         </div>
       </div>
