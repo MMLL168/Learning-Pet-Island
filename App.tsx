@@ -15,9 +15,9 @@ function App() {
   const [pet, setPet] = useState<Pet>(INITIAL_PET_STATE);
   const [user, setUser] = useState<UserState>(INITIAL_USER_STATE);
   
-  // Initialize API Key from env or localStorage
+  // Initialize API Key from localStorage only (safest for static deployment)
   const [apiKey, setApiKey] = useState<string>(() => {
-    return localStorage.getItem('gemini_api_key') || process.env.API_KEY || '';
+    return localStorage.getItem('gemini_api_key') || '';
   });
   const [showKeyInput, setShowKeyInput] = useState(false);
 
