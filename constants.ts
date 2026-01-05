@@ -46,11 +46,46 @@ export const PET_CONFIG = {
 };
 
 export const REWARDS = [
-  { id: 'sticker_star', name: '星星貼紙', cost: 100, icon: '⭐' },
-  { id: 'sticker_trophy', name: '冠軍獎盃', cost: 300, icon: '🏆' },
-  { id: 'sticker_rocket', name: '火箭徽章', cost: 500, icon: '🚀' },
-  { id: 'sticker_crown', name: '皇冠', cost: 1000, icon: '👑' },
-  { id: 'snack_pack', name: '神秘零食包 (5個飼料)', cost: 50, icon: '🍱', effect: 'food' },
+  { 
+    id: 'screen_time', 
+    name: '20 Mins Screen Time', 
+    desc: '看電視/玩手機 20 分鐘', 
+    cost: 20, 
+    icon: '📺', 
+    color: 'bg-blue-500' 
+  },
+  { 
+    id: 'fav_snack', 
+    name: 'Favorite Snack', 
+    desc: '喜歡的零食', 
+    cost: 8, 
+    icon: '🍪', 
+    color: 'bg-orange-500' 
+  },
+  { 
+    id: 'fast_food', 
+    name: 'Fast Food Trip', 
+    desc: '吃速食/麥當勞', 
+    cost: 20, 
+    icon: '🍔', 
+    color: 'bg-red-500' 
+  },
+  { 
+    id: 'skip_chores', 
+    name: 'Skip Chores', 
+    desc: '免做家事一次', 
+    cost: 15, 
+    icon: '🧹', 
+    color: 'bg-purple-500' 
+  },
+  { 
+    id: 'pocket_money', 
+    name: 'Pocket Money Bonus', 
+    desc: '增加零用錢', 
+    cost: 50, 
+    icon: '💰', 
+    color: 'bg-green-500' 
+  },
 ];
 
 // Initial State
